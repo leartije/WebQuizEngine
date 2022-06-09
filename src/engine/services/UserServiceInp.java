@@ -14,7 +14,7 @@ import org.springframework.web.server.ResponseStatusException;
 import java.security.SecureRandom;
 
 @Service
-public class UserServiceInt implements UserService, UserDetailsService {
+public class UserServiceInp implements UserService, UserDetailsService {
 
     @Autowired
     private UserRepository userRepository;
