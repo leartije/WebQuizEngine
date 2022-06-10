@@ -4,10 +4,13 @@ import engine.entity.Answer;
 import engine.entity.Quiz;
 import engine.entity.Response;
 import engine.entity.User;
+import engine.repository.QuizRepository;
 import engine.services.QuizService;
 import engine.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,10 +31,21 @@ public class QuizController {
         return quizService.saveQuiz(quiz);
     }
 
+//    @GetMapping("/api/quizzes")
+//    public List<Quiz> getAllQuestions() {
+//        return quizService.printAllQuizzes();
+//    }
+
     @GetMapping("/api/quizzes")
-    public List<Quiz> getAllQuestions() {
-        return quizService.printAllQuizzes();
+    public ResponseEntity<List<Quiz>> getAllQuizzes(
+            @RequestParam(defaultValue = "0") Integer page,
+            @RequestParam(defaultValue = "10") Integer pageSize,
+            @RequestParam(defaultValue = "id") String sortBy) {
+        List<Quiz> quizList = quizService.getAllQuizzes(page, pageSize, sortBy);
+
+        return new ResponseEntity<>(quizList, new HttpHeaders(), HttpStatus.OK);
     }
+
 
     @GetMapping("/api/quizzes/{id}")
     public Quiz getById(@PathVariable("id") int id) {

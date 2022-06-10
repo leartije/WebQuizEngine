@@ -21,7 +21,6 @@ public class UserServiceInp implements UserService, UserDetailsService {
 
     @Override
     public void saveUser(User user) {
-        System.out.println("GLEDAJ VAMO!" + user);
         if (user == null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
@@ -29,7 +28,7 @@ public class UserServiceInp implements UserService, UserDetailsService {
         if (byEmail != null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
-
+        
         User current = new User();
         current.setEmail(user.getEmail());
         current.setPassword(new BCryptPasswordEncoder(10, new SecureRandom()).encode(user.getPassword()));

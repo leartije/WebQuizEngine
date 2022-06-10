@@ -3,15 +3,19 @@ package engine.services;
 import engine.entity.Answer;
 import engine.entity.Quiz;
 import engine.entity.Response;
-import engine.entity.User;
 import engine.repository.QuizRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -92,5 +96,18 @@ public class QuizServiceImp implements QuizService {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN);
         }
         quizRepository.deleteById(id);
+    }
+
+    @Override
+    public List<Quiz> getAllQuizzes(Integer pageNo, Integer pageSize, String sortBy) {
+        Pageable paging = PageRequest.of(pageNo, pageSize, Sort.by(sortBy));
+
+        Page<Quiz> pagedResult = quizRepository.findAll(paging);
+
+        if(pagedResult.hasContent()) {
+            return pagedResult.getContent();
+        } else {
+            return new ArrayList<Quiz>();
+        }
     }
 }
