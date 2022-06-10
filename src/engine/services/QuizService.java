@@ -13,5 +13,6 @@ public interface QuizService {
     Quiz getQuizById(Integer quizId);
     Response getAnswer(int id, Answer answer);
     void deleteQ(int id);
+    public List<Quiz> getAllQuizzes(Integer pageNo, Integer pageSize, String sortBy);
 
 }

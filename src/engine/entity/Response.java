@@ -1,37 +1,13 @@
 package engine.entity;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class Response {
-
     private boolean success;
     private String feedback;
-
-    public Response(boolean success, String feedback) {
-        this.success = success;
-        this.feedback = feedback;
-    }
-
-    public boolean isSuccess() {
-        return success;
-    }
-
-    public void setSuccess(boolean success) {
-        this.success = success;
-    }
-
-    public String getFeedback() {
-        return feedback;
-    }
-
-    public void setFeedback(String feedback) {
-        this.feedback = feedback;
-    }
-
-    @Override
-    public String toString() {
-        return "Response{" +
-                "success=" + success +
-                ", feedback='" + feedback + '\'' +
-                '}';
-    }
 }
