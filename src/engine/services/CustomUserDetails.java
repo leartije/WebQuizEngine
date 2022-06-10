@@ -1,13 +1,16 @@
 package engine.services;
 
 import engine.entity.User;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 import java.util.Collections;
-
+@Getter
+@Setter
 public class CustomUserDetails implements UserDetails {
 
     private final User user;
@@ -56,7 +59,4 @@ public class CustomUserDetails implements UserDetails {
         return user.getId();
     }
 
-    public User getUser() {
-        return user;
-    }
 }

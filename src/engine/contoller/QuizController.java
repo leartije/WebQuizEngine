@@ -22,8 +22,7 @@ public class QuizController {
 
     @Autowired
     private QuizService quizService;
-    @Autowired
-    private UserService userService;
+
 
 
     @PostMapping("/api/quizzes")
@@ -55,11 +54,6 @@ public class QuizController {
     @PostMapping("/api/quizzes/{id}/solve")
     public Response getResponse(@PathVariable("id") int id, @RequestBody Answer answer) {
         return quizService.getAnswer(id, answer);
-    }
-
-    @PostMapping("/api/register")
-    public void registerUser(@Valid @RequestBody User user) {
-        userService.saveUser(user);
     }
 
     @DeleteMapping("/api/quizzes/{id}")
