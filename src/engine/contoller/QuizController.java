@@ -8,8 +8,8 @@ import engine.services.QuizService;
 import engine.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -49,9 +49,15 @@ public class QuizController {
     }
 
     @DeleteMapping("/api/quizzes/{id}")
+    @ResponseStatus(code = HttpStatus.NO_CONTENT)
     public void deleteQ(@PathVariable("id") int id) {
         quizService.deleteQ(id);
-        throw new ResponseStatusException(HttpStatus.NO_CONTENT);
+    }
+
+    @GetMapping("/api/test")
+    @ResponseBody
+    public String test(Authentication authentication) {
+        return authentication.getName();
     }
 
 }

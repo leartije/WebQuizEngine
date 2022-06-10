@@ -3,13 +3,17 @@ package engine.services;
 import engine.entity.Answer;
 import engine.entity.Quiz;
 import engine.entity.Response;
+import engine.entity.User;
 import engine.repository.QuizRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -20,8 +24,12 @@ public class QuizServiceImp implements QuizService {
 
     @Override
     public Quiz saveQuiz(Quiz quiz) {
-        if (quiz != null) {
-            return quizRepository.save(quiz);
+        Object currentUser = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if (currentUser instanceof UserDetails) {
+            if (quiz != null) {
+                quiz.setUser(((CustomUserDetails)currentUser).getUser());
+                return quizRepository.save(quiz);
+            }
         }
         throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
     }
@@ -78,6 +86,10 @@ public class QuizServiceImp implements QuizService {
         System.out.println(byId);
         if (byId.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
+        Object currentUser = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if (!Objects.equals(byId.get().getUser().getId(), ((CustomUserDetails) currentUser).getId())) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN);
         }
         quizRepository.deleteById(id);
     }

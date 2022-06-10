@@ -30,6 +30,19 @@ public class Quiz {
     @ElementCollection
     private List<Integer> answer;
 
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    private User user;
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
 
     public Quiz(String title, String text, List<String> options, List<Integer> answer) {
         this.title = title;
