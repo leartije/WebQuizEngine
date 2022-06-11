@@ -8,4 +8,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface QuizRepository extends JpaRepository<Quiz, Integer>, PagingAndSortingRepository<Quiz, Integer> {
 
+
+
 }

@@ -26,12 +26,13 @@ public class QuizServiceImp implements QuizService {
     @Autowired
     private QuizRepository quizRepository;
 
+
     @Override
     public Quiz saveQuiz(Quiz quiz) {
         Object currentUser = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         if (currentUser instanceof UserDetails) {
             if (quiz != null) {
-                quiz.setUser(((CustomUserDetails)currentUser).getUser());
+                quiz.setUser(((CustomUserDetails) currentUser).getUser());
                 return quizRepository.save(quiz);
             }
         }
@@ -59,26 +60,20 @@ public class QuizServiceImp implements QuizService {
                 .findFirst();
 
         if (first.isPresent()) {
-            System.out.println(first.get().getAnswer());
-            System.out.println(answer.getAnswer());
+            List<Integer> correctAnswers = first.get().getAnswer();
+            List<Integer> userAnswers = answer.getAnswer();
 
-            int count = 0;
-            if (answer.getAnswer() != null && answer.getAnswer() != null) {
-                for (int i = 0; i < first.get().getAnswer().size(); i++) {
-                    for (int j = 0; j < answer.getAnswer().size(); j++) {
-                        if (first.get().getAnswer().get(i).equals(answer.getAnswer().get(j))) {
-                            count++;
-                        }
-                    }
-                }
-            }
+//           boolean isEqual = correctAnswers.equals(userAnswers); zasto ovo ne radi?
 
-            if ((count == answer.getAnswer().size() && count == first.get().getAnswer().size()) ||
+            int count = isEqual(correctAnswers, userAnswers);
+
+            if ((count == correctAnswers.size() && count == userAnswers.size()) ||
                     (first.get().getAnswer() == null && answer.getAnswer() == null) ||
                     (first.get().getAnswer() == null && answer.getAnswer().size() == 0)) {
-                return new Response(true, "Dobro te je");
+
+                return new Response(true, "Congratulations, you're right!");
             }
-            return new Response(false, "nevalja");
+            return new Response(false, "Wrong answer! Please, try again.");
         }
 
         throw new ResponseStatusException(HttpStatus.NOT_FOUND);
@@ -86,13 +81,14 @@ public class QuizServiceImp implements QuizService {
 
     @Override
     public void deleteQ(int id) {
-        Optional<Quiz> byId = quizRepository.findById(id);
-        System.out.println(byId);
-        if (byId.isEmpty()) {
+        Optional<Quiz> quizForDel = quizRepository.findById(id);
+
+        if (quizForDel.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
-        Object currentUser = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        if (!Objects.equals(byId.get().getUser().getId(), ((CustomUserDetails) currentUser).getId())) {
+
+        Object currentLogInUser = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if (!Objects.equals(quizForDel.get().getUser().getId(), ((CustomUserDetails) currentLogInUser).getId())) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN);
         }
         quizRepository.deleteById(id);
@@ -104,10 +100,29 @@ public class QuizServiceImp implements QuizService {
 
         Page<Quiz> pagedResult = quizRepository.findAll(paging);
 
-        if(pagedResult.hasContent()) {
+        if (pagedResult.hasContent()) {
             return pagedResult.getContent();
         } else {
-            return new ArrayList<Quiz>();
+            return new ArrayList<>();
         }
+    }
+
+    private int isEqual(List<Integer> correctAnswers, List<Integer> userAnswers) {
+        int count = 0;
+        if (correctAnswers != null && userAnswers != null) {
+            for (Integer correctAnswer : correctAnswers) {
+                for (Integer userAnswer : userAnswers) {
+                    if (correctAnswer.equals(userAnswer)) {
+                        count++;
+                    }
+                }
+            }
+        }
+        return count;
+    }
+
+    @Override
+    public Page<Quiz> findAll(Pageable pageable) {
+        return quizRepository.findAll(pageable);
     }
 }
