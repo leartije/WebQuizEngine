@@ -1,8 +1,10 @@
 package engine.services;
 
 import engine.entity.Answer;
+import engine.entity.CompletedLog;
 import engine.entity.Quiz;
 import engine.entity.Response;
+import engine.repository.CompletedLogRepository;
 import engine.repository.QuizRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -15,6 +17,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -25,6 +28,9 @@ public class QuizServiceImp implements QuizService {
 
     @Autowired
     private QuizRepository quizRepository;
+
+    @Autowired
+    private CompletedLogRepository completedLogRepository;
 
 
     @Override
@@ -70,6 +76,10 @@ public class QuizServiceImp implements QuizService {
             if ((count == correctAnswers.size() && count == userAnswers.size()) ||
                     (first.get().getAnswer() == null && answer.getAnswer() == null) ||
                     (first.get().getAnswer() == null && answer.getAnswer().size() == 0)) {
+
+                Object currentLogInUser = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+                Long idS = ((CustomUserDetails)currentLogInUser).getId();
+                completedLogRepository.save(new CompletedLog(idS, LocalDateTime.now()));
 
                 return new Response(true, "Congratulations, you're right!");
             }
