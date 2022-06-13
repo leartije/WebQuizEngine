@@ -21,11 +21,7 @@ public class UserServiceInp implements UserService, UserDetailsService {
 
     @Override
     public void saveUser(User user) {
-        if (user == null) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
-        }
-        User byEmail = userRepository.findByEmail(user.getEmail());
-        if (byEmail != null) {
+        if (user == null || userRepository.findByEmail(user.getEmail()) != null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
 

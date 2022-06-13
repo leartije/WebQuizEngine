@@ -7,6 +7,7 @@ import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
@@ -40,6 +41,9 @@ public class Quiz {
     @JoinColumn(name = "user_id")
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private User user;
+
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    private LocalDateTime completedAt;
 
     public Quiz(String title, String text, List<String> options, List<Integer> answer) {
         this.title = title;
