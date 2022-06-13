@@ -98,6 +98,7 @@ public class QuizServiceImp implements QuizService {
         }
 
         Object currentLogInUser = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
         if (!Objects.equals(quizForDel.get().getUser().getId(), ((CustomUserDetails) currentLogInUser).getId())) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN);
         }
