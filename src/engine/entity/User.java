@@ -29,4 +29,5 @@ public class User {
     @Size(min = 5)
     private String password;
     private String role;
+
 }

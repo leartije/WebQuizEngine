@@ -20,7 +20,5 @@ public interface QuizService {
 
     void deleteQ(int id);
 
-    List<Quiz> getAllQuizzes(Integer pageNo, Integer pageSize, String sortBy);
-
     Page<Quiz> findAll(Pageable pageable);
 }

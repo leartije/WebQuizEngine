@@ -2,14 +2,12 @@ package engine.entity;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
-import org.hibernate.Hibernate;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import java.time.LocalDateTime;
-import java.util.Objects;
 
 @Entity
 @Getter
@@ -22,25 +20,15 @@ public class CompletedLog {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    private Long id;
+    private Long logId;
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private Long userId;
+    private Integer id;
     private LocalDateTime completedAt;
 
-    public CompletedLog(Long userId, LocalDateTime completedAt) {
+    public CompletedLog(Long userId, Integer id, LocalDateTime completedAt) {
         this.userId = userId;
+        this.id = id;
         this.completedAt = completedAt;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
-        CompletedLog that = (CompletedLog) o;
-        return id != null && Objects.equals(id, that.id);
-    }
-
-    @Override
-    public int hashCode() {
-        return getClass().hashCode();
     }
 }

@@ -8,9 +8,7 @@ import engine.repository.CompletedLogRepository;
 import engine.repository.QuizRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -18,7 +16,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -78,8 +75,9 @@ public class QuizServiceImp implements QuizService {
                     (first.get().getAnswer() == null && answer.getAnswer().size() == 0)) {
 
                 Object currentLogInUser = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-                Long idS = ((CustomUserDetails)currentLogInUser).getId();
-                completedLogRepository.save(new CompletedLog(idS, LocalDateTime.now()));
+                Long userId = ((CustomUserDetails)currentLogInUser).getId();
+
+                completedLogRepository.save(new CompletedLog(userId, first.get().getId(), LocalDateTime.now()));
 
                 return new Response(true, "Congratulations, you're right!");
             }
@@ -106,17 +104,10 @@ public class QuizServiceImp implements QuizService {
     }
 
     @Override
-    public List<Quiz> getAllQuizzes(Integer pageNo, Integer pageSize, String sortBy) {
-        Pageable paging = PageRequest.of(pageNo, pageSize, Sort.by(sortBy));
-
-        Page<Quiz> pagedResult = quizRepository.findAll(paging);
-
-        if (pagedResult.hasContent()) {
-            return pagedResult.getContent();
-        } else {
-            return new ArrayList<>();
-        }
+    public Page<Quiz> findAll(Pageable pageable) {
+        return quizRepository.findAll(pageable);
     }
+
 
     private int isEqual(List<Integer> correctAnswers, List<Integer> userAnswers) {
         int count = 0;
@@ -132,8 +123,5 @@ public class QuizServiceImp implements QuizService {
         return count;
     }
 
-    @Override
-    public Page<Quiz> findAll(Pageable pageable) {
-        return quizRepository.findAll(pageable);
-    }
+
 }
